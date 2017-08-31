@@ -1,0 +1,21 @@
+version: '3'
+services:
+  vpn:
+    container_name: vpn
+    build:
+      context: .
+      dockerfile: ./build/Dockerfile
+      args:
+        SOFTETHER_VERSION: v4.22-9634-beta
+        HUB_NAME: MyHub
+        HUB_PASSWD: hogehoge
+        USER_NAME: MyVpnUser
+        USER_PASSWD: fugafuga
+        COMMON_SECRET: hogefuga
+    volumes:
+      - vpn_data:/usr/vpnserver
+    ports:
+      - '500:500/udp'
+      - '4500:4500/udp'
+volumes:
+  vpn_data:

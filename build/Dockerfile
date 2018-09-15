@@ -1,22 +1,25 @@
 FROM amazonlinux:2017.03
 
-RUN yum install -y gcc make ncurses-devel openssl-devel readline-devel
+RUN yum install -y gcc make ncurses-devel openssl-devel readline-devel wget
 
-ARG SOFTETHER_VERSION="v4.22-9634-beta"
+ARG SOFTETHER_URL="https://jp.softether-download.com/files/softether/v4.22-9634-beta-2016.11.27-tree/Source_Code/softether-src-v4.22-9634-beta.tar.gz"
 ARG HUB_NAME="DefaultHub"
 ARG HUB_PASSWD="DefaultHubPassword"
 ARG USER_NAME="DefaultUser"
 ARG USER_PASSWD="DefaultUserPassword"
 ARG COMMON_SECRET="commonsec"
 
-RUN curl -L https://github.com/SoftEtherVPN/SoftEtherVPN/archive/${SOFTETHER_VERSION}.tar.gz | tar xzf - && \
-    cd SoftEtherVPN-${SOFTETHER_VERSION:1} && \
+RUN cd / && \
+    mkdir -p softether_vpn && \
+    cd softether_vpn && \
+    wget ${SOFTETHER_URL} && \
+    tar zxvf *.tar.gz && \
+    cd $(tar ztvf *.tar.gz| head -n1 | awk '{print $NF}') && \
     cp -f src/makefiles/linux_64bit.mak Makefile && \
     make && \
     make install && \
     make clean && \
-    cd / && \
-    rm -rf SoftEtherVPN-${SOFTETHER_VERSION:1}
+    rm -rf /softether_vpn
 
 RUN /usr/vpnserver/vpnserver start && \
     sleep 5 && \
@@ -29,6 +32,6 @@ RUN /usr/vpnserver/vpnserver start && \
     vpncmd /SERVER localhost /ADMINHUB:${HUB_NAME} /CMD DHCPEnable && \
     /usr/vpnserver/vpnserver stop
 
-ENTRYPOINT /usr/vpnserver/vpnserver execsvc
+CMD /usr/vpnserver/vpnserver execsvc
 
 EXPOSE 500/udp 4500/udp

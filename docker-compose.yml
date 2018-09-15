@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: ./build/Dockerfile
       args:
-        SOFTETHER_VERSION: v4.22-9634-beta
+        SOFTETHER_URL: "https://jp.softether-download.com/files/softether/v4.22-9634-beta-2016.11.27-tree/Source_Code/softether-src-v4.22-9634-beta.tar.gz"
         HUB_NAME: MyHub
         HUB_PASSWD: hogehoge
         USER_NAME: MyVpnUser
